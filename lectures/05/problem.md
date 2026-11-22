@@ -57,6 +57,7 @@ APIキーは第1回と同じ環境変数`GEMINI_API_KEY`を使います。Codesp
 AIE_QUESTION='第2回の説明では、LoRAは何を固定し何を学習しますか？ QLoRAは何を加えますか？'
 uv run python -m app.agent --full-context --trace "$AIE_QUESTION"
 ```
+"$AIE_QUESTION"agent.py の run_full_context(...) が呼ばれます。中では get_all_materials() で全資料をテキスト化し、[full-context] 入力...文字 と表示したうえで、ツールを使わない状態（tools=[]）で一括投入して回答させます。
 
 回答と引用ページ、末尾の`[time]`・`[usage]`・`[cost]`を[answer.md](answer.md)に記録します。
 
@@ -65,7 +66,7 @@ uv run python -m app.agent --full-context --trace "$AIE_QUESTION"
 ### STEP 2：検索結果だけを確認する
 
 ```bash
-uv run python -m app.retrieval "LoRA QLoRA 違い"
+
 ```
 
 エージェントを使わず、質問に近いページを最大5件取得します。講義名・章・ページタイトル・PDFページ番号・本文が表示されます。
@@ -80,6 +81,9 @@ uv run python -m app.retrieval "LoRA QLoRA 違い"
 ```bash
 uv run python -m app.agent --trace "$AIE_QUESTION"
 ```
+uv run python -m app.agent --trace "$AIE_QUESTION"agent.py の通常ルートで動き、モデルが search_materials を呼び出し、retrieval.py の search()（ベクトル検索）で近いページを探した結果をもとに回答を作ります。--trace により、どのツールがどの引数で呼ばれたかや、トークン数・推定コストが表示されます。
+
+
 
 通常の起動では、`search_materials(query)`を持つエージェントが回答します。モデルが検索語を決め、返された本文を使って答えます。
 
